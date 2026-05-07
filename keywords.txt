@@ -1,0 +1,20 @@
+# Syntax Colouring Map For A02YYUW
+
+# Data types (KEYWORD1)
+A02YYUW	KEYWORD1
+
+
+# Methods and Functions (KEYWORD2)
+begin	KEYWORD2
+
+newDistance	KEYWORD2
+getDistanceMM	KEYWORD2
+getDistanceCM	KEYWORD2
+getDistanceINCH	KEYWORD2
+
+lastRead	KEYWORD2
+
+
+# Constants (LITERAL1)
+A02YYUW_LIB_VERSION	LITERAL1
+
