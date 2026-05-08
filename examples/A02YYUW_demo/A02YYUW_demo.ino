@@ -35,6 +35,8 @@ void loop()
 {
   if (mySensor.newDistance())
   {
+    Serial.print(millis());
+    Serial.print("\t");
     Serial.print(mySensor.getDistanceMM());
     Serial.print("\t");
     Serial.print(mySensor.getDistanceCM());
