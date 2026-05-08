@@ -16,10 +16,20 @@
 class A02YYUW
 {
 public:
-  A02YYUW(Stream * str);
+  A02YYUW(Stream * str, uint8_t TX);
 
   void     begin();
 
+  //  needed for the UART AUTO only
+  //  true  = processed mode
+  //  false = real time mode (default)
+  void     setProcessingMode(bool mode);
+  bool     getProcessingMode();
+
+  //  needed for the UART CONTROLLED only
+  void     request();
+
+  //  needed by all
   bool     newDistance();
   uint16_t getDistanceMM();
   float    getDistanceCM();
@@ -28,12 +38,42 @@ public:
   uint32_t lastRead();
   void     flush();
 
-private:
+protected:
   Stream * _stream;
+  uint8_t  _TX;
   uint8_t  _byte;
   uint8_t  _high, _low;
   uint16_t _millimetres;   
   uint32_t _lastRead;   
+};
+
+
+////////////////////////////////////////////
+//
+//  DERIVED CLASSES (experimental wrappers)
+//
+class A02YYU : public A02YYUW
+{
+  public:
+  A02YYU(Stream * str, uint8_t TX) : A02YYUW(str, TX)
+  {
+  }
+};
+
+class A02YYT : public A02YYUW
+{
+  public:
+  A02YYT(Stream * str, uint8_t TX) : A02YYUW(str, TX)
+  {
+  }
+};
+
+class A02YYTW : public A02YYUW
+{
+  public:
+  A02YYTW(Stream * str, uint8_t TX) : A02YYUW(str, TX)
+  {
+  }
 };
 
 

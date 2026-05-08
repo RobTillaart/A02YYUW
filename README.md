@@ -18,26 +18,67 @@ Arduino library for A02YYUW Serial distance sensor.
 
 **Experimental**
 
-This library is to use the DFRobotics A02YYUW Serial distance sensor.
+This library is to use the DFRobotics **A02YYUW** Serial distance sensor.
 
-The A02YYUW has a range of 4.5 meter (15 feet) and it has an IP67 coating
-so it can be used outdoors in almost all weather conditions.
+The A02YYUW has a range of max 3.0 to 4.5 meter (10 to 15 feet).
+It has an IP67 coating so it can be used outdoors in most weather conditions.
+
+The library is expected to work for the **UART AUTO** types devices.
+These seem to use the same protocol, see table below.
+
+NOTE: The library is not tested with any hardware yet.
+All feedback is welcome, please open an issue on GitHub.
+
+
+Furthermore the library is expected to work for the **UART CONTROLLED**
+types devices. 
+These devices need a trigger pulse on the RX line.
+
+
+
+
 
 Feedback as always is welcome.
 
 
 ### Hardware
 
-The connector is a 4-pin JST-PH (2.0mm pitch) with the following pins.
+The connector of the A02YYUW is a 4-pin JST-PH (2.0mm pitch) 
+with the following pins.
 
 |  colour  |  name  |  description      |  Notes  |
 |:---------|:------:|:------------------|:-------:|
 |  RED     |  VCC   |  power 3.3 - 5V   |
 |  BLACK   |  GND   |  ground           |
-|  WHITE   |  TX    |  transmit 3.3V    |  use voltage divider if needed.
 |  YELLOW  |  RX    |  receive 3.3V     |
+|  WHITE   |  TX    |  transmit 3.3V    |  use voltage divider if needed.
 
 The device draws 8 mA average (see DFRobotic website).
+
+
+### Compatible or not
+
+The A02YYUW is one from a series, these are not all compatible. 
+From a datasheet. 
+
+|  Model            |  Output interface  |  Supported (1)  |
+|:-----------------:|:-------------------|:----------------|
+| DYP-A02YYU-V2.0   |  UART Auto         |  yes
+| DYP-A02YYT-V2.0   |  UART Controlled   |  trigger with requestUC()
+| DYP-A02YYM-V2.0   |  PWM Output        |  no
+| DYP-A02YYGD-V2.0  |  Switch output     |  no
+|                   |                    |
+| DYP-A02YYUW-V2.0  |  UART Auto         |  yes 
+| DYP-A02YYTW-V2.0  |  UART Controlled   |  trigger with requestUC()
+| DYP-A02YYMW-V2.0  |  PWM Output        |  no
+| DYP-A02YYGDW-V2.0 |  Switch output     |  no
+| DYP-A02YY4W-V2.0  |  RS485 output      |  no
+
+(1) Note the devices are not verified yet.
+
+Details see - https://www.dypcn.com/uploads/A02-Output-Interfaces.pdf
+
+Missing devices? please open an issue on GitHub.
 
 
 ### Related
@@ -62,8 +103,31 @@ TODO: Test
 
 ### Constructor
 
-- **A02YYUW(Stream \* str)** Set the hardware serial port to use
+- **A02YYUW(Stream \* str, uint8_t TX)** Set the hardware serial port to use,
+and the TX pin of MCU == RX of device.
 - **void begin()** reset internals.
+
+
+### UART auto specific
+
+The A02YYU and A02YYUW send a constant stream of data.
+The RX pin is used to set mode.
+
+|   RX   |  mode   |  description  |  time(ms)  |  notes  |
+|:------:|:-------:|:--------------|:-----------|:--------|
+|  HIGH  |  true   |  processed    |  100-500   |  more stable
+|  LOW   |  false  |  real time    |  100       |
+
+- **void setProcessingMode(bool mode)** see table above.
+- **bool getProcessingMode()** see table above.
+
+
+### UART controlled specific
+
+The A02YYT and A02YYTW need a trigger before they will send data.
+
+- **void request()** triggers a measurement for UART CONTROLLED
+type devices.
 
 
 ### Distance
@@ -94,11 +158,16 @@ value is a recent one.
 
 #### Should
 
-- add checksum check => error flag or just false?
+- add checks
+  - add checksum check => error flag or just false?
+  - add high check < 0x12 (max for 4500 mm; 0x1F ~8191 mm)
+- clean up class hierarchy.
 
 #### Could
 
 - create unit tests if possible
+- create a library for the PWM devices
+- create a library for the SWITCH devices
 
 #### Wont
 

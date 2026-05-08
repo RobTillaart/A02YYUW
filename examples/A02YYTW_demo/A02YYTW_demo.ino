@@ -1,5 +1,5 @@
 //
-//    FILE: A02YYUW_demo.ino
+//    FILE: A02YYTW_demo.ino
 //  AUTHOR: Rob Tillaart
 // PURPOSE: test basic behaviour and performance
 //     URL: https://github.com/RobTillaart/A02YYUW
@@ -13,7 +13,7 @@
 //  RPIPICO - Serial1 = (0,1), Serial2 = (8,9), SerialPIO = (x,y)
 
 
-A02YYUW mySensor(&Serial1, 19);
+A02YYTW mySensor(&Serial1, 19);
 
 
 void setup()
@@ -27,7 +27,7 @@ void setup()
 
   Serial1.begin(9600);
   mySensor.begin();
-  mySensor.setProcessingMode(true);
+  mySensor.request();
 }
 
 
@@ -35,12 +35,15 @@ void loop()
 {
   if (mySensor.newDistance())
   {
+    Serial.print(millis());
+    Serial.print("\t");
     Serial.print(mySensor.getDistanceMM());
     Serial.print("\t");
     Serial.print(mySensor.getDistanceCM());
     Serial.print("\t");
     Serial.print(mySensor.getDistanceINCH());
     Serial.print("\n");
+    mySensor.request();
   }
 
   //  other code here.
