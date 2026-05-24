@@ -9,9 +9,9 @@
 
 #include "Arduino.h"
 
-
-uint8_t RX = 4;
-uint8_t TX = 3;
+//  myRX, myTX does not conflict with ESP32 RX / TX
+uint8_t myRX = 4;
+uint8_t myTX = 3;
 
 
 void setup()
@@ -23,23 +23,23 @@ void setup()
   //  Serial.println(A02YYUW_LIB_VERSION);
   Serial.println();
 
-  pinMode(RX, OUTPUT);
-  digitalWrite(RX, HIGH);
-  pinMode(TX, INPUT);
+  pinMode(myRX, OUTPUT);
+  digitalWrite(myRX, HIGH);
+  pinMode(myTX, INPUT);
   //  wait for TX LOW
-  while (digitalRead(TX) == HIGH);
+  while (digitalRead(myTX) == HIGH);
 }
 
 
 void loop()
 {
-  digitalWrite(RX, LOW);
+  digitalWrite(myRX, LOW);
   delay(5);
-  digitalWrite(RX, HIGH);
+  digitalWrite(myRX, HIGH);
 
-  while (digitalRead(TX) == LOW);
+  while (digitalRead(myTX) == LOW);
   uint32_t start = micros();
-  while (digitalRead(TX) == HIGH);
+  while (digitalRead(myTX) == HIGH);
   uint32_t stop = micros();
 
   uint32_t duration = stop - start;
