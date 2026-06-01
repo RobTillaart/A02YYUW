@@ -19,6 +19,7 @@ A02YYUW::A02YYUW(Stream * str, uint8_t TX)
   //  reset variables
   _byte = 0;
   _lastRead = 0;
+  _lastHeader = 0;
   _millimetres = 0;
   _error = A02YY_OK;
 }
@@ -31,6 +32,7 @@ void A02YYUW::begin()
   //  reset variables
   _byte = 0;
   _lastRead = 0;
+  _lastHeader = 0;
   _millimetres = 0;
   _error = A02YY_OK;
 }
@@ -68,31 +70,44 @@ bool A02YYUW::newDistance()
   while (_stream->available())
   {
     uint8_t data = _stream->read();
-    if ((_byte == 0) && (data == 0xFF)) _byte++;
-    else if (_byte == 1) { _byte++; _high = data; }
-    else if (_byte == 2) { _byte++; _low = data;  }
-    else  //  _byte == 3 => catch all cases
+    if ((_byte == 0) && (data == 0xFF))
+    {
+      _lastHeader = millis();
+      _byte++;
+    }
+    else if (_byte == 1)
+    {
+      _byte++;
+      _high = data;
+    }
+    else if (_byte == 2)
+    {
+      _byte++;
+      _low = data;
+    }
+    else  //  _byte >= 3 to catch all other cases
     {
       //  test checksum
       uint8_t _crc = (_high + _low + 0xFF) & 0xFF;
       if ( _crc != data)
       {
         _error = A02YY_ERR_CRC;
+        //  unknown which byte failed, high, low or checkSum byte?
       }
       else
       {
         _error = A02YY_OK;
       }
-      //  distance can still be valid.
+      //  distance can still be valid if there is an CRC error.
       //  distance in millimetres.
       _millimetres = _high * 256 + _low;
       _lastRead = millis();
-      //  prepare for next group of 4 bytes.
+      //  prepare for next packet of 4 bytes.
       _byte = 0;
       return true;
     }
   }
-  if (millis() - _lastRead > 150)
+  if (millis() - _lastHeader > 150)
   {
     _error = A02YY_ERR_TIMEOUT;
   }

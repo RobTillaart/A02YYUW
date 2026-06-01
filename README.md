@@ -136,9 +136,8 @@ type devices.
 Syncs with the header byte so it knows which following bytes to 
 convert to a distance in millimetres. 
 Returns true if a new distance is available.
-Returns false otherwise.
-This function can set the **A02YY_ERR_CRC** however the read distance
-can still be valid as the CRC does not indicate which byte(s) failed.
+Returns false if not all bytes have arrived.
+The user should **always** check the error flag with **getLastError** as this can be set. See below.
 - **uint16_t getDistanceMM()** returns the last read distance in millimetres.
 - **float getDistanceCM()** returns the last read distance in centimetres.
 - **float getDistanceINCH()** returns the last read distance in inches.
@@ -160,12 +159,23 @@ Can be used after a restart or if communication is out of sync
 ### Error
 
 - **int getLastError()** returns error flag. 
-For now only a CRC error is detected.
 
-|  error state    |  value  |
-|:----------------|--------:|
-|  A02YY_OK       |      0  |
-|  A02YY_ERR_CRC  |   -100  |
+|  error state        |  value  |
+|:--------------------|--------:|
+|  A02YY_OK           |      0  |
+|  A02YY_ERR_CRC      |   -100  |
+|  A02YY_ERR_TIMEOUT  |   -101  |
+
+- **A02YY_OK** => no action required.
+- **A02YY_ERR_CRC** => CRC error in a new measurement, however
+the read distance can still be valid as the CRC does not indicate 
+which byte(s) failed. A comparison with the last returned distance
+should be done.
+- **A02YY_ERR_TIMEOUT** => communication failure.
+Too few bytes arrived since the last header byte was detected, 
+or since start of program.
+This error will occur too if bytes arrive and there is no header detected.
+
 
 
 ## Future

@@ -50,6 +50,7 @@ protected:
   uint8_t  _high, _low;
   uint16_t _millimetres;
   uint32_t _lastRead;
+  uint32_t _lastHeader;
 
   int      _error;
 };

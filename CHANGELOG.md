@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
 ## [0.1.2] - 2026-06-01
-- fix #3, CRC check
+- fix #3, CRC checksum
 - add A02YY_ERR_TIMEOUT error code (prep timeout).
 - minor edits
 

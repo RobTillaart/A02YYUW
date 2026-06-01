@@ -44,8 +44,14 @@ void loop()
     Serial.print(mySensor.getDistanceINCH());
     Serial.print("\n");
   }
+  else
+  {
+    Serial.print("status: ");
+    Serial.println(mySensor.getLastError());
+  }
 
   //  other code here.
+  delay(40);
 }
 
 
