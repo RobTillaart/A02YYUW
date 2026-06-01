@@ -2,7 +2,7 @@
 //    FILE: A02YYUW.cpp
 //  AUTHOR: Rob Tillaart
 //    DATE: 2026-05-07
-// VERSION: 0.1.1
+// VERSION: 0.1.2
 // PURPOSE: Arduino library for A02YYUW serial distance sensor
 //     URL: https://github.com/RobTillaart/A02YYUW
 
@@ -73,11 +73,9 @@ bool A02YYUW::newDistance()
     else if (_byte == 2) { _byte++; _low = data;  }
     else  //  _byte == 3 => catch all cases
     {
-      //  test HIGH byte <= 0x11 ? == 4500 mm
-      //  low byte and checksum can be anything incl 0xFF.
       //  test checksum
-      uint8_t _crc = data;
-      if ( (_high + _low + 0xFF) != _crc)
+      uint8_t _crc = (_high + _low + 0xFF) & 0xFF;
+      if ( _crc != data)
       {
         _error = A02YY_ERR_CRC;
       }
@@ -89,9 +87,14 @@ bool A02YYUW::newDistance()
       //  distance in millimetres.
       _millimetres = _high * 256 + _low;
       _lastRead = millis();
+      //  prepare for next group of 4 bytes.
       _byte = 0;
       return true;
     }
+  }
+  if (millis() - _lastRead > 150)
+  {
+    _error = A02YY_ERR_TIMEOUT;
   }
   return false;
 }

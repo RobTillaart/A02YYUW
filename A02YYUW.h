@@ -3,18 +3,18 @@
 //    FILE: A02YYUW.h
 //  AUTHOR: Rob Tillaart
 //    DATE: 2026-05-07
-// VERSION: 0.1.1
+// VERSION: 0.1.2
 // PURPOSE: Arduino library for A02YYUW serial distance sensor
 //     URL: https://github.com/RobTillaart/A02YYUW
 
 
 #include "Arduino.h"
 
-#define A02YYUW_LIB_VERSION         (F("0.1.1"))
+#define A02YYUW_LIB_VERSION         (F("0.1.2"))
 
-constexpr int A02YY_OK = 0;
-constexpr int A02YY_ERR_CRC = -100;
-
+constexpr int A02YY_OK          = 0;
+constexpr int A02YY_ERR_CRC     = -100;
+constexpr int A02YY_ERR_TIMEOUT = -101;
 
 class A02YYUW
 {
