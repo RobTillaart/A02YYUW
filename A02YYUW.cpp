@@ -72,6 +72,7 @@ bool A02YYUW::newDistance()
     uint8_t data = _stream->read();
     if ((_byte == 0) && (data == 0xFF))
     {
+      _error = A02YY_OK;
       _lastHeader = millis();
       _byte++;
     }
@@ -107,7 +108,7 @@ bool A02YYUW::newDistance()
       return true;
     }
   }
-  if (millis() - _lastHeader > 150)
+  if (millis() - _lastHeader > 250)
   {
     _error = A02YY_ERR_TIMEOUT;
   }
