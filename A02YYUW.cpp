@@ -1,21 +1,18 @@
 //
-//    FILE: A02YYUW.cpp
+//    FILE: A02YY.cpp
 //  AUTHOR: Rob Tillaart
 //    DATE: 2026-05-07
 // VERSION: 0.1.2
-// PURPOSE: Arduino library for A02YYUW serial distance sensor
-//     URL: https://github.com/RobTillaart/A02YYUW
+// PURPOSE: Arduino library for A02YY serial distance sensor
+//     URL: https://github.com/RobTillaart/A02YY
 
 
 #include "A02YYUW.h"
 
 
-A02YYUW::A02YYUW(Stream * str, uint8_t TX)
+A02YY::A02YY(Stream * str)
 {
   _stream   = str;
-  _TX       = TX;
-  //  needed? as Serial implies TX == OUTPUT.
-  pinMode(_TX, OUTPUT);
   //  reset variables
   _byte = 0;
   _lastRead = 0;
@@ -25,7 +22,7 @@ A02YYUW::A02YYUW(Stream * str, uint8_t TX)
 }
 
 
-void A02YYUW::begin()
+void A02YY::begin()
 {
   //  empty the stream buffer.
   flush();
@@ -37,32 +34,7 @@ void A02YYUW::begin()
   _error = A02YY_OK;
 }
 
-//  needed for the UART AUTO only
-//  true  = processed mode
-//  false = real time mode (default)
-void A02YYUW::setProcessingMode(bool mode)
-{
-  //  pinMode is already set.
-  digitalWrite(_TX, mode ? 1 : 0);
-}
-
-
-bool A02YYUW::getProcessingMode()
-{
-  return (digitalRead(_TX) == HIGH);
-}
-
-
-void A02YYUW::request()
-{
-  //  The UART CONTROLLED module measures a distance
-  //  after Pin(RX) receives a falling edge pulse.
-  //  a write seems to work.
-  _stream->write(0x0F);
-}
-
-
-bool A02YYUW::newDistance()
+bool A02YY::newDistance()
 {
   //  need to read 4 bytes from the stream starting
   //  packet == [0xFF header, high, low, checksum]
@@ -116,40 +88,69 @@ bool A02YYUW::newDistance()
 }
 
 
-uint16_t A02YYUW::getDistanceMM()
+uint16_t A02YY::getDistanceMM()
 {
   return _millimetres;
 }
 
 
-float A02YYUW::getDistanceCM()
+float A02YY::getDistanceCM()
 {
   return _millimetres * 0.1;
 }
 
 
-float A02YYUW::getDistanceINCH()
+float A02YY::getDistanceINCH()
 {
   return _millimetres * (1.0 / 25.4);  //  0.0393700787
 }
 
 
-uint32_t A02YYUW::lastRead()
+uint32_t A02YY::lastRead()
 {
   return _lastRead;
 }
 
 
-void A02YYUW::flush()
+void A02YY::flush()
 {
   while (_stream->available()) _stream->read();
 }
 
-int A02YYUW::getLastError()
+int A02YY::getLastError()
 {
   int e = _error;
   _error = A02YY_OK;
   return e;
+}
+
+
+////////////////////////////////////////////
+//
+//  DERIVED CLASSES - UART AUTO - A02YYU(W)
+//
+void A02YYU::setProcessingMode(bool mode)
+{
+  //  pinMode is already set.
+  digitalWrite(_TX, mode ? 1 : 0);
+}
+
+bool A02YYU::getProcessingMode()
+{
+  return (digitalRead(_TX) == HIGH);
+}
+
+
+////////////////////////////////////////////
+//
+//  DERIVED CLASSES - UART CONTROLLED - A02YYT(W)
+//
+void A02YYT::request()
+{
+  //  The UART CONTROLLED module measures a distance
+  //  after Pin(RX) receives a falling edge pulse.
+  //  a write seems to work.
+  _stream->write(0x0F);
 }
 
 

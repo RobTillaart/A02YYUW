@@ -7,7 +7,7 @@
 
 #include "A02YYUW.h"
 
-//  adjust your board.
+//  adjust to your board.
 //  MEGA    - Serial1 = (19,18), Serial2 = (17,16), Serial3 = (15,14)
 //  ESP32   - UART1 = (9,10), UART2 = (17,16)
 //  RPIPICO - Serial1 = (0,1), Serial2 = (8,9), SerialPIO = (x,y)
